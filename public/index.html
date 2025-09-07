@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <!--Icons-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://apis.google.com/js/api:client.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Tic Tac Throw</title>
+</head>
+<body>
+    <div class="nav navbar fixed-top">
+        <div class="row text-center">
+            <span id="put-img" style="margin-top: 2vw;">
+                <img src="assets/tpr.png" id="profile-img" class="profile-img" alt="">
+            </span>
+            <span class="logged-in"><i class="bi bi-trophy-fill" data-bs-toggle="modal" data-bs-target="#myModal" style="font-size: 3vw; color: gold; text-shadow: 2px 2px 2px black"></i><p id="name"><b>Leaderboard</b></p></span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row compo justify-content-center">
+            <div class="col-12 text-center p-3 head">
+                <h1 class="tictac">TIC TAC</h1>
+                <h1 class="throw">THROW</h1>
+            </div>
+            <div class="col-12 text-center">
+                <button type="button" class="btn btn-c3 btn-start logged-in" id="start" onclick="start(event)">START</button>
+            </div>
+            <div class="col-8 text-center flex-column d-flex">
+                <button id="btnLogin" type="button" class="btn btn-light btn-gg logged-out">
+                    <span href="#" class="google btn">
+                        <img class="m-1" src="assets/google-icon.png" alt="" height="1.5vw">Login with Google+
+                    </span>
+                </button>
+                <button type="button" id="btnLoginEmail" class="btn btn-c3 btn-start logged-out" data-bs-toggle="modal" data-bs-target="#modal-login"><i class="bi bi-box-arrow-in-right"></i>Login with Email</button>
+                <p class="logged-out">Don't have an account? <i id="btnSignup" class="logged-out" data-bs-toggle="modal" data-bs-target="#modal-signup">Sign Up</i></p>
+            </div>
+            <div class="col-12 text-center">
+                <button id="btnLogout" type="button" class="btn btn-light logged-in">
+                    <span href="#" class="google btn">
+                        <i class="bi bi-box-arrow-right"></i>Logout
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Leaderboard</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body table-wrapper-scroll my-custom-scrollbar" id="rankList">
+                    <table class="table" id="table">
+                        <thead class="table-light">
+                            <th class="text-center">Rank</th>
+                            <th class="text-center"></th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Game</th>
+                            <th class="text-center">WinRate</th>
+                            <th class="text-center" id="point">Point</th>
+                        </thead>
+                        <tbody id="tbody1" class="text-center"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal-login" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Login</h5>
+                    <button type="button" class="btn-close btn-cancel" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" class="" id="login-form">
+                    <div class="modal-body mb-3">
+                        <input type="email" class="form-control" id="input-email-login" placeholder="Email" required>
+                        <br />
+                        <input type="password" class="form-control" id="input-password-login" placeholder="Password" required>
+                        <p id="feedback-msg-login"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal-signup" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Sign up</h5>
+                    <button type="button" class="btn-close btn-cancel" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" class="" id="signup-form">
+                    <div class="modal-body mb-3">
+                        <input type="text" class="form-control" id="input-name-signup" placeholder="Name" required>
+                        <br>
+                        <input type="email" class="form-control" id="input-email-signup" placeholder="Email" required>
+                        <br />
+                        <input type="password" class="form-control" id="input-password-signup" placeholder="Password" required>
+                        <p id="feedback-msg-signup"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-cancel" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Sign up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCVuneOBuirdDyn_pTP9XuCnHOtxD40HbQ",
+      authDomain: "tictacthrow-63173.firebaseapp.com",
+      databaseURL: "https://tictacthrow-63173-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tictacthrow-63173",
+      storageBucket: "tictacthrow-63173.appspot.com",
+      messagingSenderId: "666453366418",
+      appId: "1:666453366418:web:d070b331181ccae86ab84b",
+      measurementId: "G-XR9BLXQ41E"
+    };
+    firebase.intializeApp(firebaseConfig);
+</script>
+<script type="text/javascript" src="auth.js"></script>
+<script>
+    const ref = firebase.database().ref('Game');
+    var no = 0;
+    var tbody = document.getElementById('tbody1');
+    function AddRankItem(name,imgprofile,sumPlay,winRate,point) {
+        let tr = document.createElement('tr');
+        let td1 = document.createElement('td');
+        let td2 = document.createElement('td');
+        let td3 = document.createElement('td');
+        let td4 = document.createElement('td');
+        let td5 = document.createElement('td');
+        let td6 = document.createElement('td');
+
+        let sumRate = parseInt((winRate/sumPlay)*100)
+        console.log(sumRate,winRate,sumPlay) 
+        if(winRate == undefined || winRate == null) {
+            sumRate = 0;
+        }
+        console.log(sumRate,winRate,sumplay)
+        td1.innerHTML = ++no;
+        td2.innerHTML = `<img src='${imgProfile}' style='width:3vw;border-radius:50px;/>`;
+        td3.innerHTML = name;
+        td4.innerHTML = sumPlay;
+        td5.innerHTML = sumRate + '%';
+        td6.innerHTML = point;
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        tr.appendChild(td6);
+
+        tbody.appendChild(tr);
+    }
+    function getAllData() {
+        ref.child('leaderboard').orderByCHild(`reverseScore`).on('value', function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var name = childSnapshot.val().LeaderName;
+                var point = (childSnapshot.val().SumScore);
+                var winRate = childSnapshot.val().countWin;
+                var sumPlay = childSnapshot.val().countPlay;
+                var imgProfile = childSnapshot.val().imgProfile;
+
+                AddRankItem(name,imgProfile,sumPlay,winRate,point);
+                console.log('Name In!',name.point)
+            })
+        })
+    }
+    window.onload = GetAllData;
+</script>
+</html>
